@@ -15,7 +15,7 @@ app.use((req, res, next) => {
 });
 
 // const mongoURI = 'mongodb+srv://api_user:Eni4pojp5L6d8uoy@cluster0.n3lbu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
-const mongoURI = 'mongodb+srv://api_user:Eni4pojp5L6d8uoy@cluster0.1zf1w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+const mongoURI = 'mongodb+srv://api_user:Eni4pojp5L6d8uoy@cluster0.1zf1w.mongodb.net/memes?retryWrites=true&w=majority&appName=Cluster0';
 
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("MongoDB connected"))

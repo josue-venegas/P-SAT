@@ -8,6 +8,9 @@ const MemeSearch = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showAllFrames, setShowAllFrames] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20; // Number of memes per page
+  const maxPageButtons = 5; // Maximum number of page buttons to show at a time
 
   const handleSearch = async () => {
     if (!frame) {
@@ -38,13 +41,14 @@ const MemeSearch = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const handleReset = () => {
     setFrame('');
     setMemes([]);
     setIsSearching(false);
     setIsLoading(false);
+    setCurrentPage(1);
   };
 
   const handleKeyPress = (e) => {
@@ -55,9 +59,31 @@ const MemeSearch = () => {
 
   const displayedFrames = showAllFrames ? extractedFrames : extractedFrames.slice(0, 10);
 
+  // Pagination logic
+  const totalPages = Math.ceil(memes.length / itemsPerPage);
+  const currentMemes = memes.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const getPageNumbers = () => {
+    const pages = [];
+    const startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
+    const endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
+  };
+
   return (
-    <div className={`bg-white p-6 ${isSearching ? '' : 'flex items-center justify-center'} w-2/4`}>
-      <div className={`w-full max-w-xl ${isSearching ? 'fixed top-0 left-0 right-0 p-4 bg-white shadow-md z-10' : ''}`}>
+    <div className={`bg-white p-6 ${isSearching ? '' : 'flex items-center justify-center'}`}>
+      <div className={`w-full max-w-xl ${isSearching ? 'mb-10' : ''}`}>
         <h1 className={`text-3xl font-semibold text-center text-indigo-600 ${isSearching ? 'hidden' : 'mb-6'}`}>
           FraMeme Search
         </h1>
@@ -131,20 +157,56 @@ const MemeSearch = () => {
       )}
 
       {isSearching && !isLoading && memes.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-          {memes.map((meme) => (
-            <div key={meme._id} className="bg-gray-50 p-4 rounded-lg shadow-md">
-              <h3 className="text-xl font-semibold text-indigo-600">{meme.name}</h3>
-              <img
-                src={meme.file}
-                alt={meme.name}
-                className="mt-4 rounded-md w-full"
-              />
-              <p className="text-gray-700 mt-2">{meme.caption}</p>
-              <p className="text-gray-500 mt-1 text-sm">{meme.description}</p>
-            </div>
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {currentMemes.map((meme) => (
+              <div key={meme._id} className="bg-gray-50 p-4 rounded-lg shadow-md">
+                <h3 className="text-xl font-semibold text-indigo-600">{meme.name}</h3>
+                <img
+                  src={meme.image_url}
+                  alt={meme.name}
+                  className="mt-4 rounded-md w-full"
+                />
+                <p className="text-gray-700 mt-2">{meme.gen_description}</p>
+                <hr className="my-4" />
+                <p className="text-gray-700 mt-2">{meme.gen_explanation}</p>
+                <div className="mt-4">
+                  {meme.gen_fitted_frames.map((fittedFrame) => (
+                    <div key={fittedFrame.name} className="bg-gray-100 p-2 rounded-lg mt-2">
+                      <p className="text-gray-700 font-semibold">{fittedFrame.name}</p>
+                      <p className="text-gray-500 text-sm">{fittedFrame.reasoning}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-center items-center space-x-2 mt-6">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-4 py-2 border rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 focus:outline-none disabled:opacity-50"
+            >
+              Previous
+            </button>
+            {getPageNumbers().map((page) => (
+              <button
+                key={page}
+                onClick={() => handlePageChange(page)}
+                className={`px-4 py-2 border rounded-lg ${page === currentPage ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700'} hover:bg-indigo-500 hover:text-white`}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 border rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 focus:outline-none disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+        </>
       )}
     </div>
   );
