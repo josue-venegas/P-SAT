@@ -48,6 +48,15 @@ router.post('/upload', upload.single('file'), async (req, res) => {
   }
 });
 
+router.get('/all', async (req, res) => {
+  try {
+    const memes = await Meme.find();
+    res.json(memes);
+  } catch (error) {
+    console.error('Error retrieving memes:', error);
+    res.status(500).json({ error: 'Error retrieving memes', details: error.message });
+  }
+});
 
 router.get('/memes', async (req, res) => {
   const { frames } = req.query;

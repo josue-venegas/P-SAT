@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { extractedFrames } from '../extractedFrames';
 
 const MemeSearch = () => {
   const [frame, setFrame] = useState('');
   const [memes, setMemes] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const availableFrames = ['Happy', 'Sad', 'Angry', 'Surprised', 'Disgusted', 'Fearful'];
+  const [showAllFrames, setShowAllFrames] = useState(false);
 
   const handleSearch = async () => {
     if (!frame) {
@@ -26,6 +27,19 @@ const MemeSearch = () => {
     }
   };
 
+  const handleSearchAll = async () => {
+    setIsSearching(true);
+    setIsLoading(true);
+    try {
+      const response = await axios.get('http://localhost:5000/api/all');
+      setMemes(response.data);
+    } catch (error) {
+      console.error('Error fetching memes:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   const handleReset = () => {
     setFrame('');
     setMemes([]);
@@ -38,6 +52,8 @@ const MemeSearch = () => {
       handleSearch();
     }
   };
+
+  const displayedFrames = showAllFrames ? extractedFrames : extractedFrames.slice(0, 10);
 
   return (
     <div className={`bg-white p-6 ${isSearching ? '' : 'flex items-center justify-center'} w-2/4`}>
@@ -70,29 +86,34 @@ const MemeSearch = () => {
           >
             Search
           </button>
-        </div>
-
-        <div className="mt-6 space-x-4">
-          <h3 className="text-lg font-semibold text-gray-700 mb-3">Available Frames</h3>
-          {availableFrames.map((availableFrame) => (
-            <button
-              key={availableFrame}
-              onClick={() => setFrame((prevFrame) => (prevFrame ? `${prevFrame},${availableFrame}` : availableFrame))}
-              className="p-2 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              {availableFrame}
-            </button>
-          ))}
+          <button
+            onClick={handleSearchAll}
+            className="p-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            Search All
+          </button>
         </div>
 
         {!isSearching && (
-          <div>
-            <a
-              href="/upload"
-              className="block text-center text-indigo-600 font-semibold mt-6 hover:underline"
-            >
-              Upload a Meme
-            </a>
+          <div className="mt-6 space-x-4">
+            <h3 className="text-lg font-semibold text-gray-700 mb-3">Available Frames</h3>
+            {displayedFrames.map((availableFrame) => (
+              <button
+                key={availableFrame}
+                onClick={() => setFrame((prevFrame) => (prevFrame ? `${prevFrame},${availableFrame}` : availableFrame))}
+                className="p-2 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                {availableFrame}
+              </button>
+            ))}
+            <div className="mt-4">
+              <button
+                onClick={() => setShowAllFrames(!showAllFrames)}
+                className="text-indigo-600 font-semibold hover:underline focus:outline-none"
+              >
+                {showAllFrames ? 'Show Less' : 'Show All'}
+              </button>
+            </div>
           </div>
         )}
       </div>
