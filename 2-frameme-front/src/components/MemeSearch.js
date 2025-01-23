@@ -114,9 +114,9 @@ const MemeSearch = () => {
           </button>
           <button
             onClick={handleSearchAll}
-            className="p-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="p-3 bg-white text-indigo-600 font-semibold rounded-lg border border-indigo-600 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
-            Search All
+            Show All
           </button>
         </div>
 
@@ -191,6 +191,14 @@ const MemeSearch = () => {
             ))}
           </div>
           <div className="flex justify-center items-center space-x-2 mt-6">
+            <button 
+              onClick={() => handlePageChange(1)} 
+              disabled={currentPage === 1}
+              className="px-4 py-2 border rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 focus:outline-none disabled:opacity-50"
+            >
+              First
+            </button>
+
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
@@ -213,6 +221,13 @@ const MemeSearch = () => {
               className="px-4 py-2 border rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 focus:outline-none disabled:opacity-50"
             >
               Next
+            </button>
+            <button 
+              onClick={() => handlePageChange(totalPages)} 
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 border rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 focus:outline-none disabled:opacity-50"
+            >
+              Last
             </button>
           </div>
         </>
