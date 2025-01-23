@@ -167,9 +167,18 @@ const MemeSearch = () => {
                   alt={meme.name}
                   className="mt-4 rounded-md w-full"
                 />
-                <p className="text-gray-700 mt-2">{meme.gen_description}</p>
+                
+                <p className="font-semibold mt-2">Meme description</p>
+                <p className="text-gray-700">{meme.gen_description}</p>
+                
                 <hr className="my-4" />
+                
+                <p className="font-semibold mt-2">Meme explanation</p>
                 <p className="text-gray-700 mt-2">{meme.gen_explanation}</p>
+
+                <hr className="my-4" />
+                
+                <p className="font-semibold mt-2">Fitted frames</p>
                 <div className="mt-4">
                   {meme.gen_fitted_frames.map((fittedFrame) => (
                     <div key={fittedFrame.name} className="bg-gray-100 p-2 rounded-lg mt-2">
