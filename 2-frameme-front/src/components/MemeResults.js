@@ -21,12 +21,13 @@ const MemeResults = () => {
         const params = new URLSearchParams(location.search);
         const all = params.get('all');
         const frames = params.get('frames');
+        const mode = params.get('mode');
 
         let endpoint = '';
         if (all) {
           endpoint = `http://localhost:5000/api/all?page=${currentPage}&limit=${memesPerPage}`;
         } else if (frames) {
-          endpoint = `http://localhost:5000/api/memes?frames=${frames}&page=${currentPage}&limit=${memesPerPage}`;
+          endpoint = `http://localhost:5000/api/memes?frames=${frames}&mode=${mode}&page=${currentPage}&limit=${memesPerPage}`;
         }
 
         const response = await axios.get(endpoint);

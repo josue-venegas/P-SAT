@@ -14,15 +14,21 @@ router.get('/all', async (req, res) => {
     const kymMemes = await MemeKYM.find().lean();
 
     // Filter the memes for output format
-    const imgFlipMemesFiltered = imgFlipMemes.map((meme) => {
-      const { title, template_title, image_url } = meme;
-      return { name: title, template_name: template_title, image_url, origin: 'imgflip', _id: meme._id };
-    });
+    const imgFlipMemesFiltered = imgFlipMemes.map((meme) => ({
+      name: meme.title,
+      template_name: meme.template_title,
+      image_url: meme.image_url,
+      origin: 'imgflip',
+      _id: meme._id,
+    }));
 
-    const kymMemesFiltered = kymMemes.map((meme) => {
-      const { name, image_url } = meme;
-      return { name, template_name: name, image_url, origin: 'kym', _id: meme._id };
-    });
+    const kymMemesFiltered = kymMemes.map((meme) => ({
+      name: meme.name,
+      template_name: meme.name,
+      image_url: meme.image_url,
+      origin: 'kym',
+      _id: meme._id,
+    }));
 
     // Combine the memes
     const combinedMemes = [...imgFlipMemesFiltered, ...kymMemesFiltered];
@@ -45,7 +51,7 @@ router.get('/all', async (req, res) => {
 });
 
 router.get('/memes', async (req, res) => {
-  const { frames, page = 1, limit = 10 } = req.query;
+  const { frames, page = 1, limit = 10, mode = 'all' } = req.query;
   const skip = (page - 1) * limit;
 
   if (!frames) {
@@ -54,12 +60,26 @@ router.get('/memes', async (req, res) => {
 
   try {
     const frameArray = frames.split(',').map((frame) => frame.trim());
+    let query;
 
-    // Fetch data from both collections based on the frames filter
-    const imgFlipMemes = await MemeImgFlip.find({ 'gen_fitted_frames.name': { $all: frameArray } }).lean();
-    const kymMemes = await MemeKYM.find({ 'gen_fitted_frames.name': { $all: frameArray } }).lean();
+    switch (mode) {
+      case 'any':
+        query = { 'gen_fitted_frames.name': { $in: frameArray } }; // Matches at least one frame
+        break;
+      case 'all':
+        query = { 'gen_fitted_frames.name': { $all: frameArray } }; // Matches all frames
+        break;
+      case 'exact':
+        query = { 'gen_fitted_frames.name': { $all: frameArray, $size: frameArray.length } }; // Matches exactly the given frames
+        break;
+      default:
+        return res.status(400).json({ error: 'Invalid mode specified' });
+    }
 
-    // Filter the memes for output format
+    // Fetch data from both collections based on the query
+    const imgFlipMemes = await MemeImgFlip.find(query).lean();
+    const kymMemes = await MemeKYM.find(query).lean();
+
     const imgFlipMemesFiltered = imgFlipMemes.map((meme) => ({
       name: meme.title,
       template_name: meme.template_title,
@@ -76,16 +96,10 @@ router.get('/memes', async (req, res) => {
       _id: meme._id,
     }));
 
-    // Combine the memes from both collections
     const combinedMemes = [...imgFlipMemesFiltered, ...kymMemesFiltered];
-
-    // Pagination logic
     const paginatedMemes = combinedMemes.slice(skip, skip + parseInt(limit));
 
-    // Total memes count after filtering
-    const totalImgFlipMemes = imgFlipMemes.length;
-    const totalKymMemes = kymMemes.length;
-    const totalMemes = totalImgFlipMemes + totalKymMemes;
+    const totalMemes = imgFlipMemes.length + kymMemes.length;
 
     res.json({
       memes: paginatedMemes,
