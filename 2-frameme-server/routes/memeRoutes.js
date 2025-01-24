@@ -10,13 +10,13 @@ router.get('/all', async (req, res) => {
     const kymMemes = await MemeKYM.find();
     
     const imgFlipMemesFiltered = imgFlipMemes.map((meme) => {
-      const { title, image_url, gen_description, gen_explanation, gen_fitted_frames } = meme;
-      return { name: title, image_url, gen_description, gen_explanation, gen_fitted_frames };
+      const { title, template_title, image_url } = meme;
+      return { name: title, template_name: template_title, image_url, origin: 'imgflip', _id: meme._id };
     });
 
     const kymMemesFiltered = kymMemes.map((meme) => {
-      const { name, image_url, gen_description, gen_explanation, gen_fitted_frames } = meme;
-      return { name, image_url, gen_description, gen_explanation, gen_fitted_frames };
+      const { name, image_url } = meme;
+      return { name, template_name: name, image_url, origin: 'kym', _id: meme._id };
     });
 
     res.json([...imgFlipMemesFiltered, ...kymMemesFiltered]);
@@ -38,17 +38,17 @@ router.get('/memes', async (req, res) => {
     const frameArray = Array.isArray(frames) ? frames : frames.split(',');
     const trimmedFrames = frameArray.map((frame) => frame.trim());
 
-    const memesImgFlip = await MemeImgFlip.find({ 'gen_fitted_frames.name': { $all: trimmedFrames } });
-    const memesKYM = await MemeKYM.find({ 'gen_fitted_frames.name': { $all: trimmedFrames } });
+    const imgFlipMemes = await MemeImgFlip.find({ 'gen_fitted_frames.name': { $all: trimmedFrames } });
+    const kymMemes = await MemeKYM.find({ 'gen_fitted_frames.name': { $all: trimmedFrames } });
 
-    const imgFlipMemesFiltered = memesImgFlip.map((meme) => {
-      const { title, image_url, gen_description, gen_explanation, gen_fitted_frames } = meme;
-      return { name: title, image_url, gen_description, gen_explanation, gen_fitted_frames };
+    const imgFlipMemesFiltered = imgFlipMemes.map((meme) => {
+      const { title, template_title, image_url } = meme;
+      return { name: title, template_name: template_title, image_url, origin: 'imgflip', _id: meme._id };
     });
 
-    const kymMemesFiltered = memesKYM.map((meme) => {
-      const { name, image_url, gen_description, gen_explanation, gen_fitted_frames } = meme;
-      return { name, image_url, gen_description, gen_explanation, gen_fitted_frames };
+    const kymMemesFiltered = kymMemes.map((meme) => {
+      const { name, image_url } = meme;
+      return { name, template_name: name, image_url, origin: 'kym', _id: meme._id };
     });
 
     const memes = [...imgFlipMemesFiltered, ...kymMemesFiltered];
@@ -64,6 +64,27 @@ router.get('/memes', async (req, res) => {
   }
 });
 
+router.get('/meme/:id', async (req, res) => {
+  const { id } = req.params;
 
+  try {
+    const imgFlipMeme = await MemeImgFlip.findById(id);
+    if (imgFlipMeme) {
+      const { title, template_title, image_url, gen_description, gen_explanation, gen_fitted_frames } = imgFlipMeme;
+      return res.json({ name: title, template_name: template_title, image_url, origin: 'imgflip', _id: imgFlipMeme._id, gen_description, gen_explanation, gen_fitted_frames });
+    }
+
+    const kymMeme = await MemeKYM.findById(id);
+    if (kymMeme) {
+      const { name, image_url, gen_description, gen_explanation, gen_fitted_frames } = kymMeme;
+      return res.json({ name, template_name: name, image_url, origin: 'kym', _id: kymMeme._id, gen_description, gen_explanation, gen_fitted_frames });
+    }
+
+    res.status(404).json({ message: 'Meme not found' });
+  } catch (error) {
+    console.error('Error retrieving meme:', error);
+    res.status(500).json({ error: 'Error retrieving meme', details: error.message });
+  }
+});
 
 module.exports = router;

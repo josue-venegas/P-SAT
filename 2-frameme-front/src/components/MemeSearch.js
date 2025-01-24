@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { extractedFrames } from '../extractedFrames';
+import { useNavigate } from 'react-router-dom';
 
 const MemeSearch = () => {
   const [frame, setFrame] = useState('');
@@ -9,8 +10,8 @@ const MemeSearch = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showAllFrames, setShowAllFrames] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20; // Number of memes per page
-  const maxPageButtons = 5; // Maximum number of page buttons to show at a time
+  const itemsPerPage = 20;
+  const maxPageButtons = 5;
 
   const handleSearch = async () => {
     if (!frame) {
@@ -80,6 +81,8 @@ const MemeSearch = () => {
     }
     return pages;
   };
+
+  const navigate = useNavigate();
 
   return (
     <div className={`bg-white p-6 ${isSearching ? '' : 'flex items-center justify-center'}`}>
@@ -161,32 +164,30 @@ const MemeSearch = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {currentMemes.map((meme) => (
               <div key={meme._id} className="bg-gray-50 p-4 rounded-lg shadow-md">
-                <h3 className="text-xl font-semibold text-indigo-600">{meme.name}</h3>
+                <h3 className="text-xl font-semibold text-indigo-600"><a href={`/meme/${meme._id}`}>{meme.name || "No name"}</a></h3>
                 <img
                   src={meme.image_url}
                   alt={meme.name}
-                  className="mt-4 rounded-md w-full"
+                  className="mt-4 rounded-md w-full cursor-pointer"
+                  onClick={() => navigate(`/meme/${meme._id}`)}
                 />
-                
-                <p className="font-semibold mt-2">Meme description</p>
-                <p className="text-gray-700">{meme.gen_description}</p>
-                
-                <hr className="my-4" />
-                
-                <p className="font-semibold mt-2">Meme explanation</p>
-                <p className="text-gray-700 mt-2">{meme.gen_explanation}</p>
+
+                <p className="font-semibold mt-2">Origin</p>
+                <p className="text-gray-700">{meme.origin}</p>
 
                 <hr className="my-4" />
-                
-                <p className="font-semibold mt-2">Fitted frames</p>
-                <div className="mt-4">
-                  {meme.gen_fitted_frames.map((fittedFrame) => (
-                    <div key={fittedFrame.name} className="bg-gray-100 p-2 rounded-lg mt-2">
-                      <p className="text-gray-700 font-semibold">{fittedFrame.name}</p>
-                      <p className="text-gray-500 text-sm">{fittedFrame.reasoning}</p>
-                    </div>
-                  ))}
-                </div>
+
+                <p className="font-semibold mt-2">Template name</p>
+                <p className="text-gray-700">{meme.template_name || "No template name"}</p>
+
+                <hr className="my-4" />
+
+                <button
+                  onClick={() => navigate(`/meme/${meme._id}`)}
+                  className="block w-full p-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  View more details
+                </button>
               </div>
             ))}
           </div>
@@ -196,7 +197,7 @@ const MemeSearch = () => {
               disabled={currentPage === 1}
               className="px-4 py-2 border rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 focus:outline-none disabled:opacity-50"
             >
-              First
+              &#xab; First
             </button>
 
             <button
@@ -204,7 +205,7 @@ const MemeSearch = () => {
               disabled={currentPage === 1}
               className="px-4 py-2 border rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 focus:outline-none disabled:opacity-50"
             >
-              Previous
+              &#x2039; Previous
             </button>
             {getPageNumbers().map((page) => (
               <button
@@ -220,14 +221,14 @@ const MemeSearch = () => {
               disabled={currentPage === totalPages}
               className="px-4 py-2 border rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 focus:outline-none disabled:opacity-50"
             >
-              Next
+              Next &#x203A;
             </button>
             <button 
               onClick={() => handlePageChange(totalPages)} 
               disabled={currentPage === totalPages}
               className="px-4 py-2 border rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 focus:outline-none disabled:opacity-50"
             >
-              Last
+              Last &#xbb;
             </button>
           </div>
         </>
