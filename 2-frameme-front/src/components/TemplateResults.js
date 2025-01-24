@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const MemeResults = () => {
+const TemplateResults = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
   const queryParams = new URLSearchParams(location.search);
-  const [memes, setMemes] = useState([]);
+  const [templates, setTemplates] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(parseInt(queryParams.get('page') || 1));
-  const [memesPerPage, setMemesPerPage] = useState(parseInt(queryParams.get('limit') || 8));
+  const [memesPerPage, setTemplatesPerPage] = useState(parseInt(queryParams.get('limit') || 8));
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
@@ -25,16 +25,16 @@ const MemeResults = () => {
 
         let endpoint = '';
         if (all) {
-          endpoint = `http://localhost:5000/api/allmemes?page=${currentPage}&limit=${memesPerPage}`;
+          endpoint = `http://localhost:5000/api/alltemplates?page=${currentPage}&limit=${memesPerPage}`;
         } else if (frames) {
-          endpoint = `http://localhost:5000/api/memes?frames=${frames}&mode=${mode}&page=${currentPage}&limit=${memesPerPage}`;
+          endpoint = `http://localhost:5000/api/templates?frames=${frames}&mode=${mode}&page=${currentPage}&limit=${memesPerPage}`;
         }
 
         const response = await axios.get(endpoint);
-        setMemes(response.data.memes);
+        setTemplates(response.data.templates);
         setTotalPages(response.data.totalPages); // Backend should return total pages
       } catch (error) {
-        console.error('Error fetching memes:', error);
+        console.error('Error fetching templates:', error);
       } finally {
         setIsLoading(false);
       }
@@ -54,7 +54,7 @@ const MemeResults = () => {
   };
 
   const handleMemesPerPageChange = (newLimit) => {
-    setMemesPerPage(newLimit);
+    setTemplatesPerPage(newLimit);
     const newQueryParams = new URLSearchParams(location.search);
     newQueryParams.set('limit', newLimit);
     navigate(`?${newQueryParams.toString()}`);
@@ -77,16 +77,16 @@ const MemeResults = () => {
   return (
     <div className="max-w-7xl mx-auto p-6">
       <button 
-        onClick={() => navigate('/')} 
-        className="p-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4"
+        onClick={() => navigate('/templateSearch')} 
+        className="p-2 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 mb-4"
       >
         Go Back
       </button>
-      <h1 className="text-3xl font-semibold text-indigo-600 mb-6">Meme Results</h1>
+      <h1 className="text-3xl font-semibold text-pink-600 mb-6">Template Results</h1>
 
-      {memes.length === 0 && <p>No memes found 😔</p>}
+      {templates.length === 0 && <p>No templates found 😔</p>}
       
-      {memes.length > 0 && (
+      {templates.length > 0 && (
         <div>
             <div className="flex justify-between items-center mb-4">
                 <label>
@@ -103,19 +103,18 @@ const MemeResults = () => {
                 </label>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {memes.map((meme) => (
-                <div key={meme._id} className="bg-gray-50 p-4 rounded-lg shadow-md">
-                    <h3 className="text-xl font-semibold text-indigo-600">
-                    <a href={`/meme/${meme._id}`}>{meme.name || 'No name'}</a>
+                {templates.map((template) => (
+                <div key={template._id} className="bg-gray-50 p-4 rounded-lg shadow-md">
+                    <h3 className="text-xl font-semibold text-pink-600">
+                    <a href={`/template/${template._id}`}>{template.name || 'No name'}</a>
                     </h3>
                     <img
-                    src={meme.image_url}
-                    alt={meme.name}
+                    src={template.image_url}
+                    alt={template.name}
                     className="mt-4 rounded-md w-full cursor-pointer"
-                    onClick={() => navigate(`/meme/${meme._id}`)}
+                    onClick={() => navigate(`/template/${template._id}`)}
                     />
-                    <p className="mt-2"><strong>Origin:</strong> {meme.origin}</p>
-                    <p className="mt-2"><strong>Template Name:</strong> {meme.template_name || 'No template'}</p>
+                    <p className="mt-2"><strong>Origin:</strong> {template.origin}</p>
                 </div>
                 ))}
             </div>
@@ -140,7 +139,7 @@ const MemeResults = () => {
                     <button
                         key={page}
                         onClick={() => handlePageChange(page)}
-                        className={`px-4 py-2 border rounded-lg ${page === currentPage ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700'} hover:bg-indigo-500 hover:text-white`}
+                        className={`px-4 py-2 border rounded-lg ${page === currentPage ? 'bg-pink-600 text-white' : 'bg-gray-100 text-gray-700'} hover:bg-pink-500 hover:text-white`}
                     >
                         {page}
                     </button>
@@ -171,4 +170,4 @@ const MemeResults = () => {
   );
 };
 
-export default MemeResults;
+export default TemplateResults;
