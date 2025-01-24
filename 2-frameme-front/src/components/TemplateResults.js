@@ -106,15 +106,30 @@ const TemplateResults = () => {
                 {templates.map((template) => (
                 <div key={template._id} className="bg-gray-50 p-4 rounded-lg shadow-md">
                     <h3 className="text-xl font-semibold text-pink-600">
-                    <a href={`/template/${template._id}`}>{template.name || 'No name'}</a>
+                      <a href={`/template/${template._id}`}>{template.name || 'No name'}</a>
                     </h3>
                     <img
-                    src={template.image_url}
-                    alt={template.name}
-                    className="mt-4 rounded-md w-full cursor-pointer"
-                    onClick={() => navigate(`/template/${template._id}`)}
+                      src={template.image_url}
+                      alt={template.name}
+                      className="mt-4 rounded-md w-full cursor-pointer"
+                      onClick={() => navigate(`/template/${template._id}`)}
                     />
                     <p className="mt-2"><strong>Origin:</strong> {template.origin}</p>
+                    {template.gen_fitted_frames && (
+                      <div>
+                        <p className="mt-2 font-bold">Frames:</p>
+                        <div className="space-y-2">
+                          {template.gen_fitted_frames.map((frame, index) => (
+                            <button 
+                              key={index}
+                              className="p-2 bg-gray-100 text-gray-700 font-semibold rounded-lg"
+                            >
+                              {frame.name}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                 </div>
                 ))}
             </div>

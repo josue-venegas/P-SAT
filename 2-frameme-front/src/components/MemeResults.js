@@ -106,16 +106,31 @@ const MemeResults = () => {
                 {memes.map((meme) => (
                 <div key={meme._id} className="bg-gray-50 p-4 rounded-lg shadow-md">
                     <h3 className="text-xl font-semibold text-indigo-600">
-                    <a href={`/meme/${meme._id}`}>{meme.name || 'No name'}</a>
+                      <a href={`/meme/${meme._id}`}>{meme.name || 'No name'}</a>
                     </h3>
                     <img
-                    src={meme.image_url}
-                    alt={meme.name}
-                    className="mt-4 rounded-md w-full cursor-pointer"
-                    onClick={() => navigate(`/meme/${meme._id}`)}
+                      src={meme.image_url}
+                      alt={meme.name}
+                      className="mt-4 rounded-md w-full cursor-pointer"
+                      onClick={() => navigate(`/meme/${meme._id}`)}
                     />
                     <p className="mt-2"><strong>Origin:</strong> {meme.origin}</p>
                     <p className="mt-2"><strong>Template Name:</strong> {meme.template_name || 'No template'}</p>
+                    {meme.gen_fitted_frames && (
+                      <div>
+                        <p className="mt-2 font-bold">Frames:</p>
+                        <div className="space-y-2">
+                          {meme.gen_fitted_frames.map((frame, index) => (
+                            <button 
+                              key={index}
+                              className="p-2 bg-gray-100 text-gray-700 font-semibold rounded-lg"
+                            >
+                              {frame.name}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                 </div>
                 ))}
             </div>

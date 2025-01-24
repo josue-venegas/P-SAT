@@ -1,7 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const memeRoutes = require('./routes/memeRoutes');
+
+const allMemes = require('./routes/allMemes');
+const allTemplates = require('./routes/allTemplates');
+const downloadMemes = require('./routes/downloadMemes');
+const downloadTemplates = require('./routes/downloadTemplates');
+const getMeme = require('./routes/getMeme');
+const getTemplate = require('./routes/getTemplate');
+const getMemes = require('./routes/getMemes');
+const getTemplates = require('./routes/getTemplates');
 
 const app = express();
 
@@ -14,14 +22,20 @@ app.use((req, res, next) => {
   next();
 });
 
-// const mongoURI = 'mongodb+srv://api_user:Eni4pojp5L6d8uoy@cluster0.n3lbu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 const mongoURI = 'mongodb+srv://api_user:Eni4pojp5L6d8uoy@cluster0.1zf1w.mongodb.net/memes?retryWrites=true&w=majority&appName=Cluster0';
 
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(mongoURI)
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.log("MongoDB connection error:", err));
 
-app.use('/api', memeRoutes);
+app.use('/api', allMemes);
+app.use('/api', allTemplates);
+app.use('/api', downloadMemes);
+app.use('/api', downloadTemplates);
+app.use('/api', getMeme);
+app.use('/api', getTemplate);
+app.use('/api', getMemes);
+app.use('/api', getTemplates);
 
 const PORT = 5000;
 app.listen(PORT, () => {
