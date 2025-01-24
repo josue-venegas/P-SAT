@@ -30,8 +30,11 @@ const MemeDetails = () => {
       <h1 className="text-3xl font-semibold text-indigo-600">{meme.name || 'No name'}</h1>
       <img src={meme.image_url} alt={meme.name} className="mt-4 rounded-md w-full" />
       <p className="mt-4"><strong>Origin:</strong> {meme.origin}</p>
-        <p className="mt-4"><strong>Template name:</strong> {meme.template_name || 'No template name'}</p>
-      <p className="mt-4"><strong>Description:</strong> {meme.gen_description || 'No description'}</p>
+      <p className="mt-4"><strong>Template name:</strong> {meme.template_name || 'No template name'}</p>
+      {meme.origin === 'kym' && (
+        <p className="mt-4"><strong>Description:</strong> {meme.description || 'No description'}</p>
+      )}
+      <p className="mt-4"><strong>Caption:</strong> {meme.gen_description || 'No caption'}</p>
       <p className="mt-4"><strong>Explanation:</strong> {meme.gen_explanation || 'No explanation'}</p>
       <h2 className="mt-4 text-2xl font-semibold">Fitted Frames:</h2>
       {meme.gen_fitted_frames.length === 0 ? (
