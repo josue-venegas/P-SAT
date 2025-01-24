@@ -27,23 +27,55 @@ const MemeSearch = () => {
     navigate('/templateSearch');
   };
 
+  const downloadJSON = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/downloadMemesJSON");
+      if (!response.ok) {
+        throw new Error("Failed to fetch JSON");
+      }
+
+      const blob = await response.blob(); // Convert the response to a Blob
+      const url = window.URL.createObjectURL(blob); // Create a URL for the Blob
+
+      // Create a temporary anchor element for the download
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "memes.json"; // Name of the downloaded file
+      link.click(); // Programmatically trigger the download
+
+      // Clean up
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading JSON:", error);
+    }
+  };
+
   const displayedFrames = showAllFrames ? extractedFrames : extractedFrames.slice(0, 10);
 
   return (
     <div className="w-2/4 bg-white p-10">
-      <div className="flex space-x-4">
-        <button
-          className="disabled font-semibold"
-        >
-          Search Memes
-        </button>
-        <button
-          onClick={goToTemplateSearch}
-          className="text-indigo-600 font-semibold hover:underline focus:outline-none"
-        >
-          Search Templates
-        </button>
-
+      <div className="flex justify-between">
+        <div className="flex space-x-4">
+          <button
+            className="disabled font-semibold"
+          >
+            Search Memes
+          </button>
+          <button
+            onClick={goToTemplateSearch}
+            className="text-indigo-600 font-semibold hover:underline focus:outline-none"
+          >
+            Search Templates
+          </button>
+        </div>
+        <div>
+          <button
+            onClick={downloadJSON}
+            className="text-indigo-600 font-semibold hover:underline focus:outline-none"
+          >
+            Download collection as JSON
+          </button>
+        </div>
       </div>
       <div className="flex flex-col">
         <img src="/logo_250.png" alt="FraMeme Search Logo" className="w-24 h-24 mx-auto" />
