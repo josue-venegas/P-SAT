@@ -28,6 +28,7 @@ const MemeSearch = () => {
   return (
     <div className="w-2/4 bg-white p-6 flex items-center justify-center">
       <div>
+        <img src="/logo_250.png" alt="FraMeme Search Logo" className="w-24 h-24 mx-auto" />
         <h1 className="text-4xl font-semibold text-center text-indigo-600 mb-12">FraMeme Search</h1>
         <div className="space-y-4">
           {/* Dropdown Label with Tooltip */}
