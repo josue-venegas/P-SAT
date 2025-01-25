@@ -118,19 +118,30 @@ const MemeResults = () => {
                     <p className="mt-2"><strong>Template Name:</strong> {meme.template_name || 'No template'}</p>
                     {meme.gen_fitted_frames && (
                       <div>
-                        <p className="mt-2 font-bold">Frames:</p>
-                        <div className="space-y-2">
-                          {meme.gen_fitted_frames.map((frame, index) => (
-                            <button 
-                              key={index}
-                              className="p-2 bg-gray-100 text-gray-700 font-semibold rounded-lg"
-                            >
-                              {frame.name}
-                            </button>
-                          ))}
-                        </div>
+                      <p className="mt-2 font-bold">Frames:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {meme.gen_fitted_frames.slice(0, 3).map((frame, index) => (
+                          <div 
+                            key={index}
+                            className="p-2 bg-gray-100 text-gray-700 font-semibold rounded-lg"
+                          >
+                            {frame.name}
+                          </div>
+                        ))}
+                        {meme.gen_fitted_frames.length > 3 && (
+                          <div className="p-2 text-gray-500 italic">
+                            and {meme.gen_fitted_frames.length - 3} more...
+                          </div>
+                        )}
                       </div>
+                    </div>                    
                     )}
+                    <button
+                      onClick={() => navigate(`/meme/${meme._id}`)}
+                      className="mt-4 p-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    >
+                      View Meme
+                    </button>
                 </div>
                 ))}
             </div>

@@ -118,18 +118,29 @@ const TemplateResults = () => {
                     {template.gen_fitted_frames && (
                       <div>
                         <p className="mt-2 font-bold">Frames:</p>
-                        <div className="space-y-2">
-                          {template.gen_fitted_frames.map((frame, index) => (
-                            <button 
+                        <div className="flex flex-wrap gap-2">
+                          {template.gen_fitted_frames.slice(0, 3).map((frame, index) => (
+                            <div 
                               key={index}
                               className="p-2 bg-gray-100 text-gray-700 font-semibold rounded-lg"
                             >
                               {frame.name}
-                            </button>
+                            </div>
                           ))}
+                          {template.gen_fitted_frames.length > 3 && (
+                            <div className="p-2 text-gray-500 italic">
+                              and {template.gen_fitted_frames.length - 3} more...
+                            </div>
+                          )}
                         </div>
-                      </div>
+                    </div>                    
                     )}
+                    <button
+                      onClick={() => navigate(`/template/${template._id}`)}
+                      className="mt-4 p-2 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    >
+                      View Template
+                    </button>
                 </div>
                 ))}
             </div>
