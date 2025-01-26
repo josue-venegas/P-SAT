@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const MemeImgFlip = require('../models/memeImgFlip');
 const MemeRedditEs = require('../models/memeRedditEs');
+const MemeRedditFr = require('../models/memeRedditFr');
 
 router.get('/memes', async (req, res) => {
     const { frames, page = 1, limit = 10, mode = 'all' } = req.query;
@@ -32,6 +33,7 @@ router.get('/memes', async (req, res) => {
       // Fetch data from memes collection based on the query
       const imgFlipMemes = await MemeImgFlip.find(query).lean();
       const redditSpanishMemes = await MemeRedditEs.find(query).lean();
+      const redditFrenchMemes = await MemeRedditFr.find(query).lean();
   
       const imgFlipMemesFiltered = imgFlipMemes.map((meme) => ({
         name: meme.title,
@@ -48,11 +50,18 @@ router.get('/memes', async (req, res) => {
         origin: 'reddit-spanish',
         _id: meme._id,
       }));
+
+      const redditFrenchMemesFiltered = redditFrenchMemes.map((meme) => ({
+        image_url: meme.url,
+        gen_fitted_frames: meme.gen_fitted_frames,
+        origin: 'reddit-spanish',
+        _id: meme._id,
+      }));
   
-      const combinedMemes = [...imgFlipMemesFiltered, ...redditSpanishMemesFiltered];
+      const combinedMemes = [...imgFlipMemesFiltered, ...redditSpanishMemesFiltered, ...redditFrenchMemesFiltered];
       const paginatedMemes = combinedMemes.slice(skip, skip + parseInt(limit));
   
-      const totalMemes = imgFlipMemes.length + redditSpanishMemes.length;
+      const totalMemes = imgFlipMemes.length + redditSpanishMemes.length + redditFrenchMemes.length;
   
       res.json({
         memes: paginatedMemes,
