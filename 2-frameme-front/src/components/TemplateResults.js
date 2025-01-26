@@ -115,24 +115,24 @@ const TemplateResults = () => {
                       onClick={() => navigate(`/template/${template._id}`)}
                     />
                     <p className="mt-2"><strong>Origin:</strong> {template.origin}</p>
-                    {template.gen_fitted_frames && (
+                    <p className="mt-2 font-bold">Fitted Frames:</p>
+                    {!template.gen_fitted_frames || template.gen_fitted_frames.length === 0 ? (<p>No fitted frames</p>) : (
                       <div>
-                        <p className="mt-2 font-bold">Frames:</p>
-                        <div className="flex flex-wrap gap-2">
-                          {template.gen_fitted_frames.slice(0, 3).map((frame, index) => (
-                            <div 
-                              key={index}
-                              className="p-2 bg-gray-100 text-gray-700 font-semibold rounded-lg"
-                            >
-                              {frame.name}
-                            </div>
-                          ))}
-                          {template.gen_fitted_frames.length > 3 && (
-                            <div className="p-2 text-gray-500 italic">
-                              and {template.gen_fitted_frames.length - 3} more...
-                            </div>
-                          )}
-                        </div>
+                      <div className="flex flex-wrap gap-2">
+                        {template.gen_fitted_frames.slice(0, 3).map((frame, index) => (
+                          <div 
+                            key={index}
+                            className="p-2 bg-gray-100 text-gray-700 font-semibold rounded-lg"
+                          >
+                            {frame.name}
+                          </div>
+                        ))}
+                        {template.gen_fitted_frames.length > 3 && (
+                          <div className="p-2 text-gray-500 italic">
+                            and {template.gen_fitted_frames.length - 3} more...
+                          </div>
+                        )}
+                      </div>
                     </div>                    
                     )}
                     <button

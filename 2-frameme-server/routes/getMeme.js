@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const MemeImgFlip = require('../models/memeImgFlip');
+const MemeRedditEs = require('../models/memeRedditEs');
 
 router.get('/meme/:id', async (req, res) => {
     const { id } = req.params;
@@ -10,6 +11,12 @@ router.get('/meme/:id', async (req, res) => {
       if (imgFlipMeme) {
         const { title, template_title, image_url, gen_description, gen_explanation, gen_fitted_frames } = imgFlipMeme;
         return res.json({ name: title, template_name: template_title, image_url, origin: 'imgflip', _id: imgFlipMeme._id, gen_description, gen_explanation, gen_fitted_frames });
+      }
+
+      const redditSpanishMeme = await MemeRedditEs.findById(id);
+      if (redditSpanishMeme) {
+        const { url, gen_description, gen_explanation, gen_fitted_frames } = redditSpanishMeme;
+        return res.json({ image_url: url, origin: 'reddit-spanish', _id: redditSpanishMeme._id, gen_description, gen_explanation, gen_fitted_frames });
       }
   
       res.status(404).json({ message: 'Meme not found' });

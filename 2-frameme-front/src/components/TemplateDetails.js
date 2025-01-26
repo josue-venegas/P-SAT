@@ -37,7 +37,7 @@ const TemplateDetails = () => {
       <p className="mt-4"><strong>Caption:</strong> {template.gen_description || 'No caption'}</p>
       <p className="mt-4"><strong>Explanation:</strong> {template.gen_explanation || 'No explanation'}</p>
       <h2 className="mt-4 text-2xl font-semibold">Fitted Frames:</h2>
-      {template.gen_fitted_frames.length === 0 ? (
+      {!template.gen_fitted_frames || template.gen_fitted_frames.length === 0 ? (
         <p>No fitted frames</p>
       ) : (
         template.gen_fitted_frames.map((frame, index) => (

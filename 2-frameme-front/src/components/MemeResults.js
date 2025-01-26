@@ -116,9 +116,9 @@ const MemeResults = () => {
                     />
                     <p className="mt-2"><strong>Origin:</strong> {meme.origin}</p>
                     <p className="mt-2"><strong>Template Name:</strong> {meme.template_name || 'No template'}</p>
-                    {meme.gen_fitted_frames && (
+                    <p className="mt-2 font-bold">Fitted Frames:</p>
+                    {!meme.gen_fitted_frames || meme.gen_fitted_frames.length === 0 ? (<p>No fitted frames</p>) : (
                       <div>
-                      <p className="mt-2 font-bold">Frames:</p>
                       <div className="flex flex-wrap gap-2">
                         {meme.gen_fitted_frames.slice(0, 3).map((frame, index) => (
                           <div 

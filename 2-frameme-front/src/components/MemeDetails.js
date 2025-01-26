@@ -37,7 +37,7 @@ const MemeDetails = () => {
       <p className="mt-4"><strong>Caption:</strong> {meme.gen_description || 'No caption'}</p>
       <p className="mt-4"><strong>Explanation:</strong> {meme.gen_explanation || 'No explanation'}</p>
       <h2 className="mt-4 text-2xl font-semibold">Fitted Frames:</h2>
-      {meme.gen_fitted_frames.length === 0 ? (
+      {!meme.gen_fitted_frames || meme.gen_fitted_frames.length === 0 ? (
         <p>No fitted frames</p>
       ) : (
         meme.gen_fitted_frames.map((frame, index) => (
