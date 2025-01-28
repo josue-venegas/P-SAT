@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const MemeImgFlip = require('../models/memeImgFlip');
+/* const MemeImgFlip = require('../models/memeImgFlip');
 const MemeRedditEs = require('../models/memeRedditEs');
-const MemeRedditFr = require('../models/memeRedditFr');
+const MemeRedditFr = require('../models/memeRedditFr'); */
+const LocalMemesEn = require('../models/localMemesEn');
+const LocalMemesEs = require('../models/localMemesEs');
+const LocalMemesFr = require('../models/localMemesFr');
 
 router.get('/memes', async (req, res) => {
     const { frames, page = 1, limit = 10, mode = 'all' } = req.query;
@@ -31,11 +34,14 @@ router.get('/memes', async (req, res) => {
       }
   
       // Fetch data from memes collection based on the query
-      const imgFlipMemes = await MemeImgFlip.find(query).lean();
+      /* const imgFlipMemes = await MemeImgFlip.find(query).lean();
       const redditSpanishMemes = await MemeRedditEs.find(query).lean();
-      const redditFrenchMemes = await MemeRedditFr.find(query).lean();
+      const redditFrenchMemes = await MemeRedditFr.find(query).lean(); */
+      const localMemesEs = await LocalMemesEs.find(query).lean();
+      const localMemesEn = await LocalMemesEn.find(query).lean();
+      const localMemesFr = await LocalMemesFr.find(query).lean();
   
-      const imgFlipMemesFiltered = imgFlipMemes.map((meme) => ({
+      /* const imgFlipMemesFiltered = imgFlipMemes.map((meme) => ({
         name: meme.title,
         template_name: meme.template_title,
         image_url: meme.image_url,
@@ -56,12 +62,47 @@ router.get('/memes', async (req, res) => {
         gen_fitted_frames: meme.gen_fitted_frames,
         origin: 'reddit-spanish',
         _id: meme._id,
+      })); */
+
+      const localMemesEnFiltered = localMemesEn.map((meme) => ({
+        name: meme.name,
+        template_name: meme.template_name,
+        image_url: meme.url,
+        gen_description: meme.gen_description,
+        gen_explanation: meme.gen_explanation,
+        gen_fitted_frames: meme.gen_fitted_frames,
+        origin: 'local-en',
+        _id: meme._id,
+      }));
+
+      const localMemesEsFiltered = localMemesEs.map((meme) => ({
+        name: meme.name,
+        template_name: meme.template_name,
+        image_url: meme.url,
+        gen_description: meme.gen_description,
+        gen_explanation: meme.gen_explanation,
+        gen_fitted_frames: meme.gen_fitted_frames,
+        origin: 'local-es',
+        _id: meme._id,
+      }));
+
+      const localMemesFrFiltered = localMemesFr.map((meme) => ({
+        name: meme.name,
+        template_name: meme.template_name,
+        image_url: meme.url,
+        gen_description: meme.gen_description,
+        gen_explanation: meme.gen_explanation,
+        gen_fitted_frames: meme.gen_fitted_frames,
+        origin: 'local-fr',
+        _id: meme._id,
       }));
   
-      const combinedMemes = [...imgFlipMemesFiltered, ...redditSpanishMemesFiltered, ...redditFrenchMemesFiltered];
+      //const combinedMemes = [...imgFlipMemesFiltered, ...redditSpanishMemesFiltered, ...redditFrenchMemesFiltered];
+      const combinedMemes = [...localMemesEnFiltered, ...localMemesEsFiltered, ...localMemesFrFiltered];
       const paginatedMemes = combinedMemes.slice(skip, skip + parseInt(limit));
   
-      const totalMemes = imgFlipMemes.length + redditSpanishMemes.length + redditFrenchMemes.length;
+      //const totalMemes = imgFlipMemes.length + redditSpanishMemes.length + redditFrenchMemes.length;
+      const totalMemes = localMemesEn.length + localMemesEs.length + localMemesFr.length;
   
       res.json({
         memes: paginatedMemes,
